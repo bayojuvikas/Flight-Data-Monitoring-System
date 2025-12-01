@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Generate synthetic data",
+        "type": "shell",
+        "command": "python",
+        "args": [
+          "scripts/generate_synthetic_data.py"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "Train all models",
+        "type": "shell",
+        "command": "python",
+        "args": [
+          "scripts/train_all_models.py"
+        ],
+        "group": "build",
+        "problemMatcher": [],
+        "dependsOn": [
+          "Generate synthetic data"
+        ]
+      },
+      {
+        "label": "Run Streamlit dashboard",
+        "type": "shell",
+        "command": "streamlit",
+        "args": [
+          "run",
+          "aero_ai_platform/ui/dashboard_streamlit.py"
+        ],
+        "isBackground": true,
+        "problemMatcher": []
+      }
+    ]
+  }
+  

@@ -1,0 +1,31 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Generate synthetic data",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/scripts/generate_synthetic_data.py",
+        "console": "integratedTerminal"
+      },
+      {
+        "name": "Train all models",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/scripts/train_all_models.py",
+        "console": "integratedTerminal"
+      },
+      {
+        "name": "Run Streamlit dashboard",
+        "type": "python",
+        "request": "launch",
+        "module": "streamlit",
+        "args": [
+          "run",
+          "${workspaceFolder}/aero_ai_platform/ui/dashboard_streamlit.py"
+        ],
+        "console": "integratedTerminal"
+      }
+    ]
+  }
+  
