@@ -8,6 +8,11 @@ from aero_ai_platform.config import FlightConfig
 def load_flight_raw(path=None) -> pd.DataFrame:
     if path is None:
         path = FlightConfig.OUTPUT_PATH
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Flight data CSV not found at {path}. "
+            "Please generate the dataset first using save_flight_dataset() or the Streamlit UI."
+        )
     df = pd.read_csv(path)
     return df
 

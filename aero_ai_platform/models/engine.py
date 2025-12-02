@@ -65,5 +65,10 @@ def train_engine_model(save: bool = True):
 
 
 def load_engine_model():
+    if not MODEL_PATH.exists():
+        raise FileNotFoundError(
+            f"Engine model not found at {MODEL_PATH}. "
+            "Please train the model first using train_engine_model() or the Streamlit UI."
+        )
     obj = joblib.load(MODEL_PATH)
     return obj["model"], obj["feature_names"]

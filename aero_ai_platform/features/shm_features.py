@@ -9,6 +9,11 @@ from aero_ai_platform.config import SHMConfig
 def load_shm_raw(path=None) -> pd.DataFrame:
     if path is None:
         path = SHMConfig.OUTPUT_PATH
+    if not path.exists():
+        raise FileNotFoundError(
+            f"SHM data CSV not found at {path}. "
+            "Please generate the dataset first using save_shm_dataset() or the Streamlit UI."
+        )
     df = pd.read_csv(path)
     return df
 
