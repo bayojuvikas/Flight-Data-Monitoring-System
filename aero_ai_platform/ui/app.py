@@ -17,6 +17,11 @@ from aero_ai_platform.config import (
     SHMConfig,
 )
 
+# Data generation
+from aero_ai_platform.data_generation.flight import save_flight_dataset
+from aero_ai_platform.data_generation.engine import save_engine_dataset
+from aero_ai_platform.data_generation.shm import save_shm_dataset
+
 # Feature builders & raw loaders
 from aero_ai_platform.features.flight_features import (
     build_flight_features,
@@ -32,9 +37,9 @@ from aero_ai_platform.features.shm_features import (
 )
 
 # Models
-from aero_ai_platform.models.flight import load_flight_model
-from aero_ai_platform.models.engine import load_engine_model
-from aero_ai_platform.models.shm import load_shm_model
+from aero_ai_platform.models.flight import load_flight_model, train_flight_model
+from aero_ai_platform.models.engine import load_engine_model, train_engine_model
+from aero_ai_platform.models.shm import load_shm_model, train_shm_model
 
 
 # ----------------- Streamlit setup ----------------- #
@@ -348,6 +353,62 @@ st.caption(
     "Offline, synthetic-data MVP for Flight Operations, Engine Health, and Structural Health Monitoring.\n"
     "All model outputs are translated into simple, human-understandable risk descriptions and short reports."
 )
+
+# ----------------------------------------------------
+# Top-level controls: data generation & model training
+# ----------------------------------------------------
+with st.expander("Data & model lifecycle controls", expanded=True):
+    st.markdown(
+        "Use these actions to (re)generate synthetic CSV datasets and (re)train the models directly from the app."
+    )
+
+    col_setup1, col_setup2 = st.columns(2)
+
+    with col_setup1:
+        st.subheader("Step 1 – Generate synthetic datasets")
+        st.write(
+            "This will create or overwrite the synthetic flight, engine and SHM CSV files "
+            f"in `{FlightConfig.OUTPUT_PATH.parent}`."
+        )
+
+        if st.button("Generate synthetic CSV files", key="btn_generate_data"):
+            with st.spinner("Generating synthetic datasets..."):
+                save_flight_dataset()
+                save_engine_dataset()
+                save_shm_dataset()
+
+            # Clear cached data & features so fresh CSVs are used
+            get_flight_raw.clear()
+            get_flight_features.clear()
+            get_engine_raw.clear()
+            get_engine_features.clear()
+            get_shm_raw.clear()
+            get_shm_features.clear()
+
+            st.success("Synthetic datasets generated. Tabs below now use the new CSV files.")
+
+    with col_setup2:
+        st.subheader("Step 2 – Train models")
+        st.write(
+            "Train or retrain the three models using the current synthetic datasets and save them "
+            f"into `{EngineConfig.OUTPUT_PATH.parent.parent / 'models_artifacts'}`."
+        )
+
+        if st.button("Train all models", key="btn_train_models"):
+            with st.spinner("Training Flight, Engine and SHM models..."):
+                # Train models (they print detailed metrics to the terminal/logs)
+                train_flight_model()
+                train_engine_model()
+                train_shm_model()
+
+            # Clear cached models so future calls reload updated artifacts
+            get_flight_model.clear()
+            get_engine_model.clear()
+            get_shm_model.clear()
+
+            st.success("All models trained and saved. Tabs below now use the latest models.")
+
+st.markdown("---")
 
 tab_flight, tab_engine, tab_shm = st.tabs(["🛫 Flight Operations", "🛠 Engine Health", "🧱 Structural Health"])
 
