@@ -672,3 +672,4 @@ with tab_shm:
         st.markdown("---")
         st.markdown("**Feature snapshot for this sensor**")
         st.dataframe(df_feat_shm[df_feat_shm["sensor_id"] == selected_sensor])
+
